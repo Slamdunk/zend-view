@@ -252,4 +252,26 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $url->setRouteMatch($routeMatch);
         $this->assertAttributeSame($routeMatch, 'routeMatch', $url);
     }
+
+    public function testQueryStringInViewContextShouldUseEncodedSeparator()
+    {
+        $router = new $this->treeRouteStackType;
+        $router->addRoute('default', [
+            'type' => $this->segmentRouteType,
+            'options' => [
+                'route'    => '/:controller/:action',
+            ],
+        ]);
+
+        $helper = new UrlHelper();
+        $helper->setRouter($router);
+
+        $url = $helper->__invoke('default', ['controller' => 'ctrl', 'action' => 'act'], [
+            'query' => [
+                'first' => 'arg1',
+                'second' => 'arg2 withSpace',
+            ],
+        ]);
+        $this->assertSame('/ctrl/act?first=arg1&amp;second=arg2%20withSpace', $url);
+    }
 }

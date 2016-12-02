@@ -103,6 +103,10 @@ class Url extends AbstractHelper
 
         $options['name'] = $name;
 
+        if (isset($options['query'])) {
+            $options['query'] = str_replace('+', '%20', http_build_query($options['query'], '', '&amp;'));
+        }
+
         return $this->router->assemble($params, $options);
     }
 
